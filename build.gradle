@@ -1,0 +1,66 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        //this is plugin for annotation processor lib used in AppConfig to read propertis from file
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+//this is plugin for annotation processor lib used in AppConfig
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-idea'
+apply plugin: 'war'
+
+group = 'filestorage'
+version = '0.1.0'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+springBoot {
+    executable = true
+    mainClass = "com.filestorage.Application"
+}
+
+jar {
+    baseName = 'FileStorage'
+    version = '0.1.0'
+    manifest {
+        attributes 'Main-Class': 'filestorage.Application'
+    }
+}
+
+bootRun {
+    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787"]
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter:${springBootVersion}") {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    //this is dependency for annotation processor lib used in AppConfig
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+    compile 'org.springframework:spring-context-support:4.3.9.RELEASE'
+    compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.security:spring-security-test')
+}
+
+configurations {
+    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+}
