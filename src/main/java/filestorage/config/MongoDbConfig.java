@@ -37,7 +37,7 @@ public class MongoDbConfig extends AbstractMongoConfiguration {
   @Bean
   public Mongo mongo()
   {
-    if (appConfig.getMongodbUserName().isEmpty()) {
+    if (appConfig.getMongodbUserName() == null || appConfig.getMongodbUserName().isEmpty()) {
       return new MongoClient(Collections.singletonList(new ServerAddress(appConfig.getMongodbHost(), appConfig
           .getMongodbPort())));
     } else {
